@@ -1,4 +1,5 @@
 package interpreter.model.exp;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import interpreter.exceptions.ExpressionException;
@@ -9,18 +10,27 @@ import interpreter.model.value.BoolValue;
 import interpreter.model.value.IValue;
 import interpreter.model.value.IntValue;
 import org.junit.jupiter.api.Test;
-// + imports of the interpreter classes
+
 class ArithExpTest {
 
     private final IDictionary<String, IValue> symTable = new MyDictionary<>();
     private static IExp num(int n) { return new ValueExp(new IntValue(n)); }
-    private static IExp b(boolean n){return new ValueExp(new BoolValue(n)); }
+    private static IExp b(boolean n) { return new ValueExp(new BoolValue(n)); }
 
     @Test
     void respectsOperatorPrecedenceEncodedInTheTree() throws MyException {
         IExp e = new ArithExp(ArithOp.ADD, num(2),
                 new ArithExp(ArithOp.MUL, num(3), num(5)));
         assertEquals(new IntValue(17), e.eval(symTable));
+    }
+
+    @Test
+    void subtractionAndValidDivisionWork() throws MyException {
+        IExp subExp = new ArithExp(ArithOp.SUB, num(10), num(4));
+        assertEquals(new IntValue(6), subExp.eval(symTable));
+
+        IExp divExp = new ArithExp(ArithOp.DIV, num(20), num(5));
+        assertEquals(new IntValue(4), divExp.eval(symTable));
     }
 
     @Test
@@ -31,10 +41,13 @@ class ArithExpTest {
     }
 
     @Test
-    void nonIntegerOperandTest() throws MyException{
-        IExp e = new  ArithExp(ArithOp.ADD, num(1),b(true) );
-        var exc = assertThrows(ExpressionException.class,() -> e.eval(symTable));
-        assertEquals("second operand is not an integer", exc.getMessage());
-    }
+    void nonIntegerOperandTest() {
+        IExp e1 = new ArithExp(ArithOp.ADD, b(true), num(1));
+        var exc1 = assertThrows(ExpressionException.class, () -> e1.eval(symTable));
+        assertEquals("first operand is not an integer", exc1.getMessage());
 
+        IExp e2 = new ArithExp(ArithOp.ADD, num(1), b(true));
+        var exc2 = assertThrows(ExpressionException.class, () -> e2.eval(symTable));
+        assertEquals("second operand is not an integer", exc2.getMessage());
+    }
 }

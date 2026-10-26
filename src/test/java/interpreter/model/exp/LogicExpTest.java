@@ -21,12 +21,19 @@ public class LogicExpTest {
     void validLogicalEvaluation() throws MyException {
         IExp andExp = new LogicExp(LogicOp.AND, b(true), b(false));
         assertEquals(new BoolValue(false), andExp.eval(symTable));
+
+        IExp orExp = new LogicExp(LogicOp.OR, b(true), b(false));
+        assertEquals(new BoolValue(true), orExp.eval(symTable));
     }
 
     @Test
     void nonBooleanOperandThrowsException() {
-        IExp invalidExp = new LogicExp(LogicOp.OR, b(true), num(5));
-        var exc = assertThrows(ExpressionException.class, () -> invalidExp.eval(symTable));
-        assertEquals("second operand is not a boolean", exc.getMessage());
+        IExp invalidFirst = new LogicExp(LogicOp.AND, num(5), b(true));
+        var exc1 = assertThrows(ExpressionException.class, () -> invalidFirst.eval(symTable));
+        assertEquals("first operand is not a boolean", exc1.getMessage());
+
+        IExp invalidSecond = new LogicExp(LogicOp.OR, b(true), num(5));
+        var exc2 = assertThrows(ExpressionException.class, () -> invalidSecond.eval(symTable));
+        assertEquals("second operand is not a boolean", exc2.getMessage());
     }
 }
