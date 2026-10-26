@@ -19,9 +19,9 @@ public class PrgState {
         exeStack.push(program);
     }
     // getters, setters, toString ...
-    public IStack<IStmt> getStack() { return exeStack; }
+    public IStack<IStmt> getExeStack() { return exeStack; }
     public IDictionary<String, IValue> getSymTable() { return symTable; }
-    public IList<IValue> getOUT() { return out; }
+    public IList<IValue> getOut() { return out; }
     public IStmt getStatements() { return originalProgram; }
 
     @Override

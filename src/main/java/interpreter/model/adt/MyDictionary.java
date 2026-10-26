@@ -36,4 +36,8 @@ public class MyDictionary<K,V> implements IDictionary<K,V>{
             throw new ADTException("no name " + name + " is in the SysTable");
         sysTable.put(name, value);
     }
+    @Override
+    public String toString(){
+        return sysTable.toString();
+    }
 }
