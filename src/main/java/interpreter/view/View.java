@@ -31,8 +31,8 @@ public class View {
             }
             IStmt selectedProgram = switch(option){
                 case "1" -> Examples.ex1;
-                case "2" -> Examples.ex1;
-                case "3" -> Examples.ex1;
+                case "2" -> Examples.ex2;
+                case "3" -> Examples.ex3;
                 default -> null;
             };
 
