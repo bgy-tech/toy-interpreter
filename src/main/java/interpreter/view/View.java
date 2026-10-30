@@ -21,6 +21,7 @@ public class View {
             System.out.println("1. Run Example 1: " + Examples.ex1);
             System.out.println("2. Run Example 2: " + Examples.ex2);
             System.out.println("3. Run Example 3: " + Examples.ex3);
+            System.out.println("4. Run Example 3: " + Examples.ex4);
             System.out.println("0. Exit");
             System.out.print("Input option: ");
 
@@ -33,6 +34,7 @@ public class View {
                 case "1" -> Examples.ex1;
                 case "2" -> Examples.ex2;
                 case "3" -> Examples.ex3;
+                case "4" -> Examples.ex4;
                 default -> null;
             };
 
