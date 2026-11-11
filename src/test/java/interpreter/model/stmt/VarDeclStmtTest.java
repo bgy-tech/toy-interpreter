@@ -24,7 +24,7 @@ public class VarDeclStmtTest {
     @BeforeEach
     void setUp() {
         symTable = new MyDictionary<>();
-        state = new PrgState(new MyStack<>(), symTable, new MyList<>(), new NopStmt());
+        state = PrgState.of(new NopStmt());
     }
 
     @Test

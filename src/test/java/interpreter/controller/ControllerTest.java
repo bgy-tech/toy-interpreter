@@ -18,8 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ControllerTest {
 
     private static PrgState run(IStmt program) throws MyException {
-        PrgState state = new PrgState(new MyStack<>(), new MyDictionary<>(),
-                new MyList<>(), program);
+        PrgState state = PrgState.of(program);
         new Controller(new Repository(state), false).allStep(); // display off
         return state;
     }
@@ -47,8 +46,7 @@ class ControllerTest {
 
     @Test
     void oneStepOnEmptyStackThrowsException() throws MyException {
-        PrgState state = new PrgState(new MyStack<>(), new MyDictionary<>(),
-                new MyList<>(), new NopStmt());
+        PrgState state = PrgState.of(new NopStmt());
         Controller controller = new Controller(new Repository(state), false);
 
         // First oneStep pops and executes the initial NopStmt, leaving the stack empty

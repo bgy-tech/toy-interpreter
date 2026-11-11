@@ -36,6 +36,15 @@ public class MyDictionary<K,V> implements IDictionary<K,V>{
             throw new ADTException("no name " + name + " is in the SysTable");
         sysTable.put(name, value);
     }
+
+    @Override
+    public void remove(K key) throws ADTException {
+        if (!sysTable.containsKey(key)) {
+            throw new ADTException("key " + key + " not in dictionary");
+        }
+        sysTable.remove(key);
+    }
+
     @Override
     public String toString(){
         return sysTable.toString();

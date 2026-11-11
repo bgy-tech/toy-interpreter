@@ -13,7 +13,7 @@ public class NopStmtTest {
     @Test
     void nopLeavesStateUnchanged() throws MyException {
         IStmt initialProgram = new NopStmt();
-        PrgState state = new PrgState(new MyStack<>(), new MyDictionary<>(), new MyList<>(), new NopStmt());
+        PrgState state = PrgState.of(new NopStmt());
         IStmt nop = new NopStmt();
 
         nop.execute(state);

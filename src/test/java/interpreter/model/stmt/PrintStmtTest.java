@@ -21,7 +21,7 @@ public class PrintStmtTest {
     @BeforeEach
     void setUp() {
         outList = new MyList<>();
-        state = new PrgState(new MyStack<>(), new MyDictionary<>(), outList, new NopStmt());
+        state = PrgState.of(new NopStmt());
     }
 
     @Test

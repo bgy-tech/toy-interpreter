@@ -25,7 +25,7 @@ public class IfStmtTest {
     @BeforeEach
     void setUp() {
         exeStack = new MyStack<>();
-        state = new PrgState(exeStack, new MyDictionary<>(), new MyList<>(), new NopStmt());
+        state = PrgState.of(new NopStmt());
         thenStmt = new PrintStmt(new ValueExp(new IntValue(1)));
         elseStmt = new PrintStmt(new ValueExp(new IntValue(0)));
     }

@@ -8,6 +8,6 @@ public interface IDictionary<K, V> {
      V lookup(K name) throws ADTException;
      void put(K name , V value) throws ADTException;
      void update(K name , V value) throws ADTException;
-
+     void remove(K key) throws ADTException;
 
 }

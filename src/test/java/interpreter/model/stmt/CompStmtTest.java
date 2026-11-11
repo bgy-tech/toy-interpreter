@@ -20,7 +20,7 @@ public class CompStmtTest {
     void setUp() throws MyException{
         exeStack = new MyStack<>();
         // Create a fresh state with empty ADTs for total isolation
-        state = new PrgState(exeStack, new MyDictionary<>(), new MyList<>(), new NopStmt());
+        state = PrgState.of(new NopStmt());
         exeStack.pop(); // Remove the dummy NopStmt pushed by the PrgState constructor!
     }
 
