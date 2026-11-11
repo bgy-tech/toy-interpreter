@@ -10,85 +10,86 @@ import interpreter.model.value.IntValue;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RelationalExpTest {
     private final IDictionary<String, IValue> symTable = new MyDictionary<>();
     private static IExp num(int n) { return new ValueExp(new IntValue(n)); }
     private static IExp b(boolean n) { return new ValueExp(new BoolValue(n)); }
 
-    //all relation ops tests:
     @Test
     void greaterOrEqualTest() throws MyException {
+        IExp ge1 = new RelationalExp(RelOp.GE, num(5), num(5));
+        assertEquals(new BoolValue(true), ge1.eval(symTable));
 
-        IExp greaterOrEqualExp1 = new RelationalExp(RelOp.GREATER_OR_EQUAL, num(5), num(5));
-        assertEquals(new BoolValue(true), greaterOrEqualExp1.eval(symTable));
-        IExp greaterOrEqualExp2 = new RelationalExp(RelOp.GREATER_OR_EQUAL, num(5), num(4));
-        assertEquals(new BoolValue(true), greaterOrEqualExp2.eval(symTable));
+        IExp ge2 = new RelationalExp(RelOp.GE, num(5), num(4));
+        assertEquals(new BoolValue(true), ge2.eval(symTable));
 
-        IExp falseExp = new RelationalExp(RelOp.GREATER_OR_EQUAL, num(4), num(5));
-        assertEquals(new BoolValue(false), falseExp.eval(symTable));
-    }
-    @Test
-    void lessOrEqualTest() throws MyException
-    {
-        IExp lessOrEqualExp1 = new RelationalExp(RelOp.LESS_OR_EQUAL, num(5), num(5));
-        assertEquals(new BoolValue(true), lessOrEqualExp1.eval(symTable));
-        IExp lessOrEqualExp2 = new RelationalExp(RelOp.LESS_OR_EQUAL, num(4), num(5));
-        assertEquals(new BoolValue(true), lessOrEqualExp2.eval(symTable));
-
-        IExp falseExp = new RelationalExp(RelOp.LESS_OR_EQUAL, num(5), num(4));
+        IExp falseExp = new RelationalExp(RelOp.GE, num(4), num(5));
         assertEquals(new BoolValue(false), falseExp.eval(symTable));
     }
 
     @Test
-    void greaterThenTest() throws MyException {
-       IExp greaterThenExp = new RelationalExp(RelOp.GREATER_THEN, num(5), num(4));
-       assertEquals(new BoolValue(true), greaterThenExp.eval(symTable));
+    void lessOrEqualTest() throws MyException {
+        IExp le1 = new RelationalExp(RelOp.LE, num(5), num(5));
+        assertEquals(new BoolValue(true), le1.eval(symTable));
 
-       IExp falseExp = new RelationalExp(RelOp.GREATER_THEN, num(4), num(5));
-       assertEquals(new BoolValue(false), falseExp.eval(symTable));
+        IExp le2 = new RelationalExp(RelOp.LE, num(4), num(5));
+        assertEquals(new BoolValue(true), le2.eval(symTable));
+
+        IExp falseExp = new RelationalExp(RelOp.LE, num(5), num(4));
+        assertEquals(new BoolValue(false), falseExp.eval(symTable));
     }
 
     @Test
-    void lessThenTest() throws MyException
-    {
-        IExp lessThenExp = new RelationalExp(RelOp.LESS_THEN, num(4), num(5));
-        assertEquals(new BoolValue(true), lessThenExp.eval(symTable));
+    void greaterThanTest() throws MyException {
+        IExp gt = new RelationalExp(RelOp.GT, num(5), num(4));
+        assertEquals(new BoolValue(true), gt.eval(symTable));
 
-        IExp falseExp = new RelationalExp(RelOp.LESS_THEN, num(5), num(4));
+        IExp falseExp = new RelationalExp(RelOp.GT, num(4), num(5));
         assertEquals(new BoolValue(false), falseExp.eval(symTable));
-
     }
+
+    @Test
+    void lessThanTest() throws MyException {
+        IExp lt = new RelationalExp(RelOp.LT, num(4), num(5));
+        assertEquals(new BoolValue(true), lt.eval(symTable));
+
+        IExp falseExp = new RelationalExp(RelOp.LT, num(5), num(4));
+        assertEquals(new BoolValue(false), falseExp.eval(symTable));
+    }
+
     @Test
     void equalTest() throws MyException {
+        IExp eq = new RelationalExp(RelOp.EQ, num(5), num(5));
+        assertEquals(new BoolValue(true), eq.eval(symTable));
 
-        IExp equalExp = new RelationalExp(RelOp.EQUAL, num(5), num(5));
-        assertEquals(new BoolValue(true), equalExp.eval(symTable));
-
-        IExp falseExp = new RelationalExp(RelOp.EQUAL, num(5), num(0));
+        IExp falseExp = new RelationalExp(RelOp.EQ, num(5), num(0));
         assertEquals(new BoolValue(false), falseExp.eval(symTable));
     }
+
     @Test
     void notEqualTest() throws MyException {
-        IExp notEqualExp = new RelationalExp(RelOp.NOT_EQUAL, num(5), num(0));
-        assertEquals(new BoolValue(true), notEqualExp.eval(symTable));
+        IExp ne = new RelationalExp(RelOp.NE, num(5), num(0));
+        assertEquals(new BoolValue(true), ne.eval(symTable));
 
-        IExp falseExp = new RelationalExp(RelOp.NOT_EQUAL, num(5), num(5));
+        IExp falseExp = new RelationalExp(RelOp.NE, num(5), num(5));
         assertEquals(new BoolValue(false), falseExp.eval(symTable));
     }
-
 
     @Test
     void nonIntegerOperandThrowsException() {
-        IExp invalidFirst = new RelationalExp(RelOp.NOT_EQUAL, b(true), num(5));
+        IExp invalidFirst = new RelationalExp(RelOp.NE, b(true), num(5));
         var exc1 = assertThrows(ExpressionException.class, () -> invalidFirst.eval(symTable));
-        assertEquals("first operand is not a integer", exc1.getMessage());
+        assertEquals("first operand is not an integer", exc1.getMessage());
 
-        IExp invalidSecond = new RelationalExp(RelOp.EQUAL, num(5), b(true));
+        IExp invalidSecond = new RelationalExp(RelOp.EQ, num(5), b(true));
         var exc2 = assertThrows(ExpressionException.class, () -> invalidSecond.eval(symTable));
         assertEquals("second operand is not an integer", exc2.getMessage());
     }
 
+    @Test
+    void toStringFormatsInfixCorrectly() {
+        IExp exp = new RelationalExp(RelOp.LT, num(2), num(3));
+        assertEquals("(2 < 3)", exp.toString());
+    }
 }
-
