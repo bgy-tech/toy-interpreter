@@ -46,7 +46,13 @@ public class MyDictionary<K,V> implements IDictionary<K,V>{
     }
 
     @Override
+    public Map<K, V> toMap(){
+        return Map.copyOf(sysTable);
+    }
+
+    @Override
     public String toString(){
         return sysTable.toString();
     }
+
 }

@@ -8,50 +8,59 @@ import interpreter.model.value.StringValue;
 import java.io.BufferedReader;
 
 public class PrgState {
-    final private IStack<IStmt> exeStack;
-    final private IDictionary<String, IValue> symTable;
-    final private IList<IValue> out;
+    private IStack<IStmt> exeStack;
+    private IDictionary<String, IValue> symTable;
+    private IList<IValue> out;
+    private IStmt originalProgram; // Optional field, but good to have
     private IDictionary<StringValue, BufferedReader> fileTable;
-    final private IStmt originalProgram;
 
-    public PrgState(IStack<IStmt> exeStack, IDictionary<String, IValue> symTable,
-                    IList<IValue> out, IDictionary<StringValue, BufferedReader> fileTable, IStmt program) {
-        this.exeStack = exeStack;
-        this.symTable = symTable;
-        this.out = out;
+    public PrgState(IStack<IStmt> stk, IDictionary<String, IValue> symtbl, IList<IValue> ot, IDictionary<StringValue, BufferedReader> fileTable, IStmt prg) {
+        this.exeStack = stk;
+        this.symTable = symtbl;
+        this.out = ot;
         this.fileTable = fileTable;
-        this.originalProgram = program;
-        exeStack.push(program);
+        this.originalProgram = prg; // For now, we don't need a deep copy
+        // Push the initial program onto the execution stack
+        this.exeStack.push(prg);
     }
 
-    // Static factory to initialize fresh empty structures
     public static PrgState of(IStmt program) {
-        return new PrgState(
-                new MyStack<>(),
-                new MyDictionary<>(),
-                new MyList<>(),
-                new MyDictionary<>(),
-                program
-        );
+        return new PrgState(new MyStack<>(), new MyDictionary<>(), new MyList<>(), new MyDictionary<>(), program);
     }
 
-    // getters, setters, toString ...
-    //setters:
-    public void setFileTable(IDictionary<StringValue, BufferedReader> fileTable) { this.fileTable = fileTable;}
-    //getters:
-    public IDictionary<StringValue, BufferedReader> getFileTable() { return fileTable; }
+    public String toLogString() {
+        var sb = new StringBuilder();
+        sb.append("ExeStack:\n");
+        exeStack.toList().forEach(s -> sb.append(s).append('\n'));
+        sb.append("SymTable:\n");
+        symTable.toMap().forEach((k, v) -> sb.append(k).append(" --> ").append(v).append('\n'));
+        sb.append("Out:\n");
+        out.toList().forEach(v -> sb.append(v).append('\n'));
+        sb.append("FileTable:\n");
+        fileTable.toMap().keySet().forEach(f -> sb.append(f.val()).append('\n'));
+        return sb.toString();
+    }
+
+    // Getters and Setters for the fields
     public IStack<IStmt> getExeStack() { return exeStack; }
+    public void setExeStack(IStack<IStmt> exeStack) { this.exeStack = exeStack; }
+
     public IDictionary<String, IValue> getSymTable() { return symTable; }
+    public void setSymTable(IDictionary<String, IValue> symTable) { this.symTable = symTable; }
+
     public IList<IValue> getOut() { return out; }
-    public IStmt getStatements() { return originalProgram; }
+    public void setOut(IList<IValue> out) { this.out = out; }
+
+    public IDictionary<StringValue, BufferedReader> getFileTable() { return fileTable; }
+    public void setFileTable(IDictionary<StringValue, BufferedReader> fileTable) { this.fileTable = fileTable; }
 
     @Override
     public String toString() {
-        return "Execution Stack: \n" + exeStack.toString() + "\n" +
-                "Symbol Table: \n" + symTable.toString() + "\n" +
-                "Output List: \n" + out.toString() + "\n" +
-                "------------------------------------------";
+        return "--- Program State ---\n" +
+                "ExeStack: " + exeStack.toString() + "\n" +
+                "SymTable: " + symTable.toString() + "\n" +
+                "Out: " + out.toString() + "\n" +
+                "FileTable: " + fileTable.toString() + "\n" +
+                "---------------------\n";
     }
-
 }
-

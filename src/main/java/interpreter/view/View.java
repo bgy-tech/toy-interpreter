@@ -3,11 +3,7 @@ package interpreter.view;
 import interpreter.controller.Controller;
 import interpreter.exceptions.MyException;
 import interpreter.model.PrgState;
-import interpreter.model.adt.MyDictionary;
-import interpreter.model.adt.MyList;
-import interpreter.model.adt.MyStack;
 import interpreter.model.stmt.IStmt;
-import interpreter.model.value.IValue;
 import interpreter.repository.IRepository;
 import interpreter.repository.Repository;
 
@@ -21,7 +17,8 @@ public class View {
             System.out.println("1. Run Example 1: " + Examples.ex1);
             System.out.println("2. Run Example 2: " + Examples.ex2);
             System.out.println("3. Run Example 3: " + Examples.ex3);
-            System.out.println("4. Run Example 3: " + Examples.ex4);
+            System.out.println("4. Run Example 4: " + Examples.ex4);
+            System.out.println("5. Run Example 5: " + Examples.ex5);
             System.out.println("0. Exit");
             System.out.print("Input option: ");
 
@@ -35,6 +32,7 @@ public class View {
                 case "2" -> Examples.ex2;
                 case "3" -> Examples.ex3;
                 case "4" -> Examples.ex4;
+                case "5" -> Examples.ex5;
                 default -> null;
             };
 
@@ -49,9 +47,8 @@ public class View {
     private void runProgram(IStmt selectedProgram){
         try{
             //fresh new program state
-            PrgState state = new PrgState(new MyStack<>(), new MyDictionary<>(), new MyList<>(),
-                    selectedProgram);
-            IRepository repo = new Repository(state);
+            PrgState state = PrgState.of(selectedProgram);
+            IRepository repo = new Repository(state, "log.txt");
             Controller ctr = new Controller(repo, true);
             ctr.allStep();
         }catch(MyException e){
