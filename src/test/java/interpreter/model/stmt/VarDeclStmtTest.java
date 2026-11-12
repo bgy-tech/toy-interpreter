@@ -4,60 +4,61 @@ import interpreter.exceptions.MyException;
 import interpreter.exceptions.StatementException;
 import interpreter.model.PrgState;
 import interpreter.model.adt.IDictionary;
-import interpreter.model.adt.MyDictionary;
-import interpreter.model.adt.MyList;
-import interpreter.model.adt.MyStack;
 import interpreter.model.type.BoolType;
-import interpreter.model.type.IType;
+import interpreter.model.type.IntType;
 import interpreter.model.type.StringType;
+import interpreter.model.value.BoolValue;
 import interpreter.model.value.IValue;
 import interpreter.model.value.IntValue;
+import interpreter.model.value.StringValue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class VarDeclStmtTest {
+
     private PrgState state;
     private IDictionary<String, IValue> symTable;
 
     @BeforeEach
     void setUp() {
-        symTable = new MyDictionary<>();
         state = PrgState.of(new NopStmt());
+        symTable = state.getSymTable();
     }
 
     @Test
     void varFirstDeclaredTest() throws MyException {
-        IType type = new BoolType();
-        IStmt newStmt = new VarDeclStmt("v", type);
-        newStmt.execute(state);
+        IStmt varStmt = new VarDeclStmt("x", new IntType());
+        varStmt.execute(state);
 
-        assertTrue(symTable.isDefined("v"));
+        assertTrue(symTable.isDefined("x"));
+        assertEquals(new IntValue(0), symTable.lookup("x"));
     }
-    //Default values -test cases:
+
     @Test
     void booleanDefaultValueTest() throws MyException {
-        BoolType type = new BoolType();
-        IStmt newStmt = new VarDeclStmt("v", type);
-        newStmt.execute(state);
+        IStmt varStmt = new VarDeclStmt("flag", new BoolType());
+        varStmt.execute(state);
 
-        assertEquals(type.defaultValue(), symTable.lookup("v"));
+        assertEquals(new BoolValue(false), symTable.lookup("flag"));
     }
 
     @Test
     void stringDefaultValueTest() throws MyException {
-        StringType type = new StringType();
-        IStmt newStmt = new VarDeclStmt("v", type);
-        newStmt.execute(state);
+        IStmt varStmt = new VarDeclStmt("s", new StringType());
+        varStmt.execute(state);
 
-        assertEquals(type.defaultValue(), symTable.lookup("v"));
+        assertEquals(new StringValue(""), symTable.lookup("s"));
     }
 
     @Test
     void redeclarationThrowsException() throws MyException {
-        symTable.put("v", new IntValue(0));
-        IStmt redeclare = new VarDeclStmt("v", new BoolType());
-        assertThrows(StatementException.class, () -> redeclare.execute(state));
+        IStmt varStmt1 = new VarDeclStmt("x", new IntType());
+        IStmt varStmt2 = new VarDeclStmt("x", new BoolType());
+
+        varStmt1.execute(state);
+        var exc = assertThrows(StatementException.class, () -> varStmt2.execute(state));
+        assertNotNull(exc.getMessage());
     }
 }

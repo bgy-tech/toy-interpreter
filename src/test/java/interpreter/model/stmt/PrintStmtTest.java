@@ -2,34 +2,29 @@ package interpreter.model.stmt;
 
 import interpreter.exceptions.MyException;
 import interpreter.model.PrgState;
-import interpreter.model.adt.IList;
-import interpreter.model.adt.MyDictionary;
-import interpreter.model.adt.MyList;
-import interpreter.model.adt.MyStack;
+import interpreter.model.adt.*;
 import interpreter.model.exp.ValueExp;
 import interpreter.model.value.IValue;
 import interpreter.model.value.IntValue;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class PrintStmtTest {
-    private PrgState state;
-    private IList<IValue> outList;
-
-    @BeforeEach
-    void setUp() {
-        outList = new MyList<>();
-        state = PrgState.of(new NopStmt());
-    }
+class PrintStmtTest {
 
     @Test
     void printAppendsToOutList() throws MyException {
-        IStmt printStmt = new PrintStmt(new ValueExp(new IntValue(10)));
-        printStmt.execute(state);
+        PrgState state = PrgState.of(new NopStmt());
+        IList<IValue> out = state.getOut();
 
-        assertEquals(1, outList.size());
-        assertEquals(new IntValue(10), outList.get(0));
+        IStmt print1 = new PrintStmt(new ValueExp(new IntValue(10)));
+        IStmt print2 = new PrintStmt(new ValueExp(new IntValue(20)));
+
+        print1.execute(state);
+        print2.execute(state);
+
+        assertEquals(2, out.size());
+        assertEquals(new IntValue(10), out.get(0));
+        assertEquals(new IntValue(20), out.get(1));
     }
 }
