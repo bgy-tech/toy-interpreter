@@ -2,6 +2,8 @@ package interpreter.model.adt;
 
 import interpreter.exceptions.ADTException;
 
+import java.util.Map;
+
 public interface IDictionary<K, V> {
     //k - name, v -value stored in SymTable
      boolean isDefined(K name);
@@ -9,5 +11,5 @@ public interface IDictionary<K, V> {
      void put(K name , V value) throws ADTException;
      void update(K name , V value) throws ADTException;
      void remove(K key) throws ADTException;
-
+     Map<K, V> toMap();
 }

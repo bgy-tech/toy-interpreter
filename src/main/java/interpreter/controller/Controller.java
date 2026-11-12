@@ -3,39 +3,43 @@ package interpreter.controller;
 import interpreter.exceptions.MyException;
 import interpreter.exceptions.StatementException;
 import interpreter.model.PrgState;
+import interpreter.model.adt.IStack;
 import interpreter.model.stmt.IStmt;
 import interpreter.repository.IRepository;
 
 public class Controller {
+    private IRepository repo;
+    private boolean displayFlag;
 
-    private final IRepository repo;
-    private final boolean displayFlag;
-
-    public Controller(IRepository repo, boolean flag) {
+    public Controller(IRepository repo, boolean displayFlag) {
         this.repo = repo;
-        this.displayFlag = flag;
+        this.displayFlag = displayFlag;
     }
 
     public PrgState oneStep(PrgState state) throws MyException {
-        var stack = state.getExeStack();
-        if (stack.isEmpty()) throw new StatementException("program state stack is empty");
-        IStmt crtStmt = stack.pop();
+        IStack<IStmt> stk = state.getExeStack();
+        if (stk.isEmpty()) {
+            throw new StatementException("program state stack is empty");
+        }
+        IStmt crtStmt = stk.pop();
         return crtStmt.execute(state);
     }
 
     public void allStep() throws MyException {
         PrgState prg = repo.getCrtPrg();
-        display(prg); // only if the display flag is on
+        repo.logPrgStateExec();
+        display(prg);
+
         while (!prg.getExeStack().isEmpty()) {
             oneStep(prg);
+            repo.logPrgStateExec();
             display(prg);
-
         }
     }
 
-    public void display(PrgState prg){
-        if(displayFlag){
-            System.out.println(prg.toString());
+    private void display(PrgState state) {
+        if (displayFlag) {
+            System.out.println(state.toString());
         }
     }
 }
